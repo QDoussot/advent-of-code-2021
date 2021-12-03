@@ -2,22 +2,6 @@ use std::collections::LinkedList;
 use std::io::{self, BufRead, BufReader};
 use std::str::FromStr;
 
-#[allow(dead_code)]
-fn number_of_increase(mut depth_list: impl Iterator<Item = usize>) -> usize {
-    let last_depth = depth_list.next();
-    let mut number = 0;
-    if let Some(mut last_depth) = last_depth {
-        for depth in depth_list {
-            if depth > last_depth {
-                number += 1;
-            }
-            last_depth = depth;
-        }
-    }
-    number
-}
-
-#[allow(dead_code)]
 fn number_of_increase_bis(value_list: impl Iterator<Item = usize>) -> usize {
     let mut last_value = None;
     let mut number = 0;
@@ -77,6 +61,18 @@ where
     }
 }
 
+pub fn part_1(depths: Vec<usize>) -> usize {
+    number_of_increase_bis(depths.into_iter())
+}
+
+pub fn part_2(depths: Vec<usize>) -> usize {
+    let windows = window_iter(depths.iter(), 3);
+    let sums = windows
+        .map(|win| win.into_iter().fold(0, |acc, x| acc + x))
+        .collect::<Vec<_>>();
+    number_of_increase_bis(sums.into_iter())
+}
+
 fn main() -> Result<(), String> {
     let stdin = BufReader::new(io::stdin());
     let lines = stdin.lines().collect::<Result<Vec<_>, io::Error>>().unwrap();
@@ -87,18 +83,7 @@ fn main() -> Result<(), String> {
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
 
-    println!("{}", number_of_increase_bis(depths.into_iter()));
-
-    let vec = (1..10).collect::<Vec<usize>>();
-    let iter = window_iter(vec.iter(), 3);
-    for win in iter {
-        println!("{:?}", win);
-
-        println!("{:?}", win.into_iter().fold(0, |acc, x| acc + x));
-    }
+    println!("{}", part_1(depths));
 
     Ok(())
 }
-
-#[cfg(test)]
-mod test {}
