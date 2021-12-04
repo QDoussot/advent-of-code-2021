@@ -2,6 +2,8 @@ use std::io::{self, BufRead, BufReader};
 use structopt::StructOpt;
 
 mod day_1;
+mod day_2;
+
 mod solver;
 use solver::Solver;
 
@@ -44,7 +46,10 @@ enum Error {
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
-    let solvers: [[Box<dyn Solver>; 2]; 1] = [[solver::new::<day_1::FirstPart>(), solver::new::<day_1::SecondPart>()]];
+    let solvers: [[Box<dyn Solver>; 2]; 2] = [
+        [solver::new::<day_1::First>(), solver::new::<day_1::Second>()],
+        [solver::new::<day_2::First>(), solver::new::<day_2::Second>()],
+    ];
     if opt.day > solvers.len() || !((1..=2).contains(&opt.part)) {
         Err(Error::NoCorrespondingSolver)?
     }

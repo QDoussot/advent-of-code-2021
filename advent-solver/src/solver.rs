@@ -1,6 +1,7 @@
 #[derive(Debug)]
-
-pub enum Error {}
+pub enum Error {
+    WrongInput,
+}
 
 pub trait Solver {
     fn solve(&self, lines: &[String]) -> Result<String, Error>;
