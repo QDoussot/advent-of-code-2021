@@ -54,7 +54,7 @@ fn main() -> Result<(), Error> {
         [
             [new::<day_1::First>(), new::<day_1::Second>()],
             [new::<day_2::First>(), new::<day_2::Second>()],
-            [new::<day_3::First>(), new::<Unimplemented>()],
+            [new::<day_3::First>(), new::<day_3::Second>()],
         ]
     };
 
