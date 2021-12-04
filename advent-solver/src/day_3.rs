@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::solver::{self, Solver};
+use crate::solver::{self, Exercice, Solver};
 
 const SEQ_LEN: usize = 12;
 
@@ -83,8 +83,9 @@ impl OccSeq {
     }
 }
 
+#[derive(Default)]
 pub struct Parser {}
-impl crate::solver::Parser for Parser {
+impl crate::solver::Parse for Parser {
     type ProblemModel = Vec<BinSeq>;
 
     fn parse(&self, lines: &[String]) -> Result<Self::ProblemModel, crate::solver::Error> {
@@ -101,6 +102,17 @@ impl crate::solver::Parser for Parser {
 pub struct First {}
 
 impl Solver for First {
+    type ProblemModel = Vec<BinSeq>;
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, solver::Error> {
+        first_part(model)
+            .map_err(Into::into)
+            .map(|power_consumption| power_consumption)
+    }
+}
+
+impl Exercice for First {
     fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
         let diagnostic = lines
             .iter()
@@ -132,16 +144,14 @@ fn first_part(diagnostic: Vec<BinSeq>) -> Result<usize, solver::Error> {
 pub struct Second {}
 
 impl Solver for Second {
-    fn solve(&self, lines: &[String]) -> Result<String, solver::Error> {
-        let diagnostic = lines
-            .iter()
-            .enumerate()
-            .map(|(n, line)| BinSeq::from_str(line).map_err(|e| solver::Error::WrongLine(n, e)))
-            .collect::<Result<Vec<_>, solver::Error>>()?;
-        let oxygen = most_common_in_matching(&diagnostic, MostCommon {}, vec![])?;
-        let co2 = most_common_in_matching(&diagnostic, LeastCommon {}, vec![])?;
+    type ProblemModel = Vec<BinSeq>;
 
-        Ok(format!("{:?}", oxygen.as_number() * co2.as_number()))
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, solver::Error> {
+        let oxygen = most_common_in_matching(&model, MostCommon {}, vec![])?;
+        let co2 = most_common_in_matching(&model, LeastCommon {}, vec![])?;
+        Ok(oxygen.as_number() * co2.as_number())
     }
 }
 

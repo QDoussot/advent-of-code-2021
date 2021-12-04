@@ -1,6 +1,6 @@
 use std::{num::ParseIntError, str::FromStr};
 
-use crate::solver;
+use crate::solver::{self, Parse};
 
 pub(crate) enum Move {
     Forward(usize),
@@ -38,15 +38,32 @@ impl TryFrom<&String> for Move {
 }
 
 #[derive(Default)]
-pub struct First {}
-impl solver::Solver for First {
-    fn solve(&self, lines: &[String]) -> Result<String, solver::Error> {
+pub(crate) struct Parser {}
+impl Parse for Parser {
+    type ProblemModel = Vec<Move>;
+
+    fn parse(&self, lines: &[String]) -> Result<Self::ProblemModel, crate::solver::Error> {
         let moves = lines
             .iter()
-            .map(Move::try_from)
-            .collect::<Result<Vec<_>, Error>>()
-            .unwrap();
-        Ok(part_1(moves).to_string())
+            .enumerate()
+            .map(|(i, line)| {
+                line.try_into()
+                    .map_err(|_| solver::Error::WrongLine(i, solver::FormatError::UnexpectedCharacter))
+            })
+            .collect::<Result<Vec<_>, _>>();
+        moves
+    }
+}
+
+#[derive(Default)]
+pub(crate) struct First {}
+impl solver::Solver for First {
+    type ProblemModel = Vec<Move>;
+
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, solver::Error> {
+        Ok(part_1(model))
     }
 }
 
@@ -65,15 +82,14 @@ pub(crate) fn part_1(moves: Vec<Move>) -> usize {
 }
 
 #[derive(Default)]
-pub struct Second {}
+pub(crate) struct Second {}
 impl solver::Solver for Second {
-    fn solve(&self, lines: &[String]) -> Result<String, solver::Error> {
-        let moves = lines
-            .iter()
-            .map(Move::try_from)
-            .collect::<Result<Vec<_>, Error>>()
-            .unwrap();
-        Ok(part_2(moves).to_string())
+    type ProblemModel = Vec<Move>;
+
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, solver::Error> {
+        Ok(part_2(model))
     }
 }
 
