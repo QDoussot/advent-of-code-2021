@@ -2,7 +2,7 @@ use std::collections::LinkedList;
 
 use std::str::FromStr;
 
-use crate::Solver;
+use crate::solver::{Parse, Solver};
 
 fn number_of_increase_bis(value_list: impl Iterator<Item = usize>) -> usize {
     let mut last_value = None;
@@ -61,16 +61,30 @@ where
 }
 
 #[derive(Default)]
-pub struct First {}
+pub struct Parser {}
 
-impl Solver for First {
-    fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
+impl Parse for Parser {
+    type ProblemModel = Vec<usize>;
+
+    fn parse(&self, lines: &[String]) -> Result<Self::ProblemModel, crate::solver::Error> {
         let depths = lines
             .iter()
             .map(|line| usize::from_str(line))
             .collect::<Result<Vec<_>, _>>()
             .unwrap();
-        Ok(part_1(depths).to_string())
+        Ok(depths)
+    }
+}
+
+#[derive(Default)]
+pub struct First {}
+
+impl Solver for First {
+    type ProblemModel = Vec<usize>;
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, crate::solver::Error> {
+        Ok(part_1(model))
     }
 }
 
@@ -78,13 +92,11 @@ impl Solver for First {
 pub struct Second {}
 
 impl Solver for Second {
-    fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
-        let depths = lines
-            .iter()
-            .map(|line| usize::from_str(line))
-            .collect::<Result<Vec<_>, _>>()
-            .unwrap();
-        Ok(part_2(depths).to_string())
+    type ProblemModel = Vec<usize>;
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, crate::solver::Error> {
+        Ok(part_2(model))
     }
 }
 

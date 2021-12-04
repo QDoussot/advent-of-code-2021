@@ -4,22 +4,33 @@ use std::io::{self, BufRead, BufReader};
 use structopt::StructOpt;
 
 mod day_1;
+use day_1::First as Day1First;
+use day_1::Parser as Day1Parser;
+use day_1::Second as Day1Second;
+
 mod day_2;
+use day_2::First as Day2First;
+use day_2::Parser as Day2Parser;
+use day_2::Second as Day2Second;
+
 mod day_3;
+use day_3::First as Day3First;
+use day_3::Parser as Day3Parser;
+use day_3::Second as Day3Second;
 
 mod solver;
-use solver::Solver;
+use solver::{Exercice, Schooler};
 
 struct Fake {}
 
-impl Solver for Fake {
+impl Exercice for Fake {
     fn solve(&self, _: &[String]) -> Result<String, solver::Error> {
         Ok("Fake solution".into())
     }
 }
 
 struct True {}
-impl Solver for True {
+impl Exercice for True {
     fn solve(&self, _: &[String]) -> Result<String, solver::Error> {
         Ok("True solution".into())
     }
@@ -49,12 +60,21 @@ enum Error {
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
-    let solvers: [[Box<dyn Solver>; 2]; 3] = {
+    let solvers: [[Box<dyn Exercice>; 2]; 3] = {
         use solver::{new, Unimplemented};
         [
-            [new::<day_1::First>(), new::<day_1::Second>()],
-            [new::<day_2::First>(), new::<day_2::Second>()],
-            [new::<day_3::First>(), new::<day_3::Second>()],
+            [
+                Schooler::<Day1Parser, Day1First>::new(),
+                Schooler::<Day1Parser, Day1Second>::new(),
+            ],
+            [
+                Schooler::<Day2Parser, Day2First>::new(),
+                Schooler::<Day2Parser, Day2Second>::new(),
+            ],
+            [
+                Schooler::<Day3Parser, Day3First>::new(),
+                Schooler::<Day3Parser, Day3Second>::new(),
+            ],
         ]
     };
 
