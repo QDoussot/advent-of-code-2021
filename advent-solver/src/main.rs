@@ -51,7 +51,7 @@ fn main() -> Result<(), Error> {
         [solver::new::<day_2::First>(), solver::new::<day_2::Second>()],
     ];
     if opt.day > solvers.len() || !((1..=2).contains(&opt.part)) {
-        Err(Error::NoCorrespondingSolver)?
+        return Err(Error::NoCorrespondingSolver);
     }
 
     let lines = match opt.input {
@@ -74,7 +74,7 @@ fn main() -> Result<(), Error> {
     };
 
     let solution = solvers[opt.day - 1][opt.part - 1].solve(&lines);
-    println!("{}", solution.map_err(|_| Error::SolverFailed)?);
+    println!("{}", solution.map_err(Error::SolverFailed)?);
 
     Ok(())
 }

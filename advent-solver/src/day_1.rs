@@ -63,17 +63,11 @@ where
 #[derive(Default)]
 pub struct First {}
 
-impl First {
-    pub fn new() -> Box<Self> {
-        Box::new(Self {})
-    }
-}
-
 impl Solver for First {
     fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
         let depths = lines
-            .into_iter()
-            .map(|line| usize::from_str(&line))
+            .iter()
+            .map(|line| usize::from_str(line))
             .collect::<Result<Vec<_>, _>>()
             .unwrap();
         Ok(part_1(depths).to_string())
@@ -86,8 +80,8 @@ pub struct Second {}
 impl Solver for Second {
     fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
         let depths = lines
-            .into_iter()
-            .map(|line| usize::from_str(&line))
+            .iter()
+            .map(|line| usize::from_str(line))
             .collect::<Result<Vec<_>, _>>()
             .unwrap();
         Ok(part_2(depths).to_string())
@@ -100,8 +94,6 @@ pub fn part_1(depths: Vec<usize>) -> usize {
 
 pub fn part_2(depths: Vec<usize>) -> usize {
     let windows = window_iter(depths.iter(), 3);
-    let sums = windows
-        .map(|win| win.into_iter().fold(0, |acc, x| acc + x))
-        .collect::<Vec<_>>();
-    number_of_increase_bis(sums.into_iter())
+    let sums = windows.map(|win| win.into_iter().sum());
+    number_of_increase_bis(sums)
 }
