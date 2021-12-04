@@ -1,8 +1,11 @@
+#![feature(array_zip)]
+
 use std::io::{self, BufRead, BufReader};
 use structopt::StructOpt;
 
 mod day_1;
 mod day_2;
+mod day_3;
 
 mod solver;
 use solver::Solver;
@@ -40,16 +43,21 @@ struct Opt {
 enum Error {
     CantOpenInputFile(String),
     NoCorrespondingSolver,
-    SolverFailed,
+    SolverFailed(solver::Error),
 }
 
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
-    let solvers: [[Box<dyn Solver>; 2]; 2] = [
-        [solver::new::<day_1::First>(), solver::new::<day_1::Second>()],
-        [solver::new::<day_2::First>(), solver::new::<day_2::Second>()],
-    ];
+    let solvers: [[Box<dyn Solver>; 2]; 3] = {
+        use solver::{new, Unimplemented};
+        [
+            [new::<day_1::First>(), new::<day_1::Second>()],
+            [new::<day_2::First>(), new::<day_2::Second>()],
+            [new::<day_3::First>(), new::<Unimplemented>()],
+        ]
+    };
+
     if opt.day > solvers.len() || !((1..=2).contains(&opt.part)) {
         return Err(Error::NoCorrespondingSolver);
     }
