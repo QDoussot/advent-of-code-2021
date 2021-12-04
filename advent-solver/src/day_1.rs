@@ -61,15 +61,15 @@ where
 }
 
 #[derive(Default)]
-pub struct FirstPart {}
+pub struct First {}
 
-impl FirstPart {
+impl First {
     pub fn new() -> Box<Self> {
         Box::new(Self {})
     }
 }
 
-impl Solver for FirstPart {
+impl Solver for First {
     fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
         let depths = lines
             .into_iter()
@@ -81,9 +81,9 @@ impl Solver for FirstPart {
 }
 
 #[derive(Default)]
-pub struct SecondPart {}
+pub struct Second {}
 
-impl Solver for SecondPart {
+impl Solver for Second {
     fn solve(&self, lines: &[String]) -> Result<String, crate::solver::Error> {
         let depths = lines
             .into_iter()
