@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 structopt = "0.3.25"
+derive_more = "0.99.17"
+ansi_term = "0.12.1"
+itertools = "0.10.1"

@@ -46,7 +46,7 @@ enum Error {
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
-    let solvers: [[Box<dyn Exercice>; 2]; 3] = {
+    let solvers: [[Box<dyn Exercice>; 2]; 4] = {
         use solver::{new, Unimplemented};
         [
             [
@@ -60,6 +60,10 @@ fn main() -> Result<(), Error> {
             [
                 Schooler::<Day3Parser, Day3First>::new(),
                 Schooler::<Day3Parser, Day3Second>::new(),
+            ],
+            [
+                Schooler::<Day4Parser, Day4First>::new(),
+                Schooler::<Day4Parser, Day4Second>::new(),
             ],
         ]
     };
