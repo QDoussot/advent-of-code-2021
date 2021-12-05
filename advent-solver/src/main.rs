@@ -26,12 +26,6 @@ use day_4::Second as Day4Second;
 mod solver;
 use solver::{Exercice, Schooler};
 
-struct Fake {}
-
-//struct BoundedInteger<const MIN: usize, const MAX: usize> {
-//value: usize,
-//}
-
 #[derive(StructOpt)]
 struct Opt {
     day: usize,
