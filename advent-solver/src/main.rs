@@ -18,27 +18,13 @@ use day_3::First as Day3First;
 use day_3::Parser as Day3Parser;
 use day_3::Second as Day3Second;
 
+mod day_4;
+use day_4::First as Day4First;
+use day_4::Parser as Day4Parser;
+use day_4::Second as Day4Second;
+
 mod solver;
 use solver::{Exercice, Schooler};
-
-struct Fake {}
-
-impl Exercice for Fake {
-    fn solve(&self, _: &[String]) -> Result<String, solver::Error> {
-        Ok("Fake solution".into())
-    }
-}
-
-struct True {}
-impl Exercice for True {
-    fn solve(&self, _: &[String]) -> Result<String, solver::Error> {
-        Ok("True solution".into())
-    }
-}
-
-//struct BoundedInteger<const MIN: usize, const MAX: usize> {
-//value: usize,
-//}
 
 #[derive(StructOpt)]
 struct Opt {
