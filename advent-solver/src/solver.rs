@@ -57,11 +57,17 @@ pub fn new<So: Default>() -> Box<So> {
     Box::new(So::default())
 }
 
-#[derive(Default)]
-pub struct Unimplemented {}
-impl Exercice for Unimplemented {
-    fn solve(&self, _lines: &[String]) -> Result<String, Error> {
-        Err(Error::UnimplementedSolver)
+pub struct Unimplemented<P, S> {
+    //
+    p: PhantomData<P>,
+    s: PhantomData<S>,
+}
+impl<P, S> Default for Unimplemented<P, S> {
+    fn default() -> Self {
+        Self {
+            p: PhantomData::<P>::default(),
+            s: PhantomData::<S>::default(),
+        }
     }
 }
 
@@ -74,4 +80,18 @@ pub trait Solver {
     type ProblemModel;
     type Solution: ToString;
     fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, Error>;
+}
+
+impl<P, S> Solver for Unimplemented<P, S>
+where
+    P: Debug,
+    S: Display,
+{
+    type ProblemModel = P;
+
+    type Solution = S;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, Error> {
+        Err(Error::UnimplementedSolver)
+    }
 }
