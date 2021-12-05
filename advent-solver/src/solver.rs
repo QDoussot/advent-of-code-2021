@@ -1,12 +1,20 @@
+use derive_more::Display;
+use std::fmt::Debug;
+use std::{fmt::Display, marker::PhantomData};
+
 #[derive(Debug)]
 pub enum Error {
     UnimplementedSolver,
-    WrongLine(usize, FormatError),
-    ExpectationUnfulfilled,
+    WrongLine {
+        description: String,
+        line_number: usize,
+        line: String,
+    },
+    ExpectationUnfulfilled(String),
     Unexpected,
 }
 
-#[derive(Debug)]
+#[derive(Display, Debug)]
 pub enum FormatError {
     UnexpectedCharacter,
     WrongLenght(usize),

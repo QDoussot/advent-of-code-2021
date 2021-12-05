@@ -71,7 +71,9 @@ impl OccSeq {
             .0
             .map(|x| match x {
                 x if x < 0 => Ok(false),
-                0 => Err(solver::Error::ExpectationUnfulfilled),
+                0 => Err(solver::Error::ExpectationUnfulfilled(
+                    "No most common bytes when required".into(),
+                )),
                 _ => Ok(true),
             })
             .into_iter()
@@ -92,7 +94,13 @@ impl crate::solver::Parse for Parser {
         let diagnostic = lines
             .iter()
             .enumerate()
-            .map(|(n, line)| BinSeq::from_str(line).map_err(|e| solver::Error::WrongLine(n, e)))
+            .map(|(line_number, line)| {
+                BinSeq::from_str(line).map_err(|e| solver::Error::WrongLine {
+                    line_number,
+                    line: line.into(),
+                    description: e.to_string(),
+                })
+            })
             .collect::<Result<Vec<_>, solver::Error>>();
         diagnostic
     }
@@ -117,7 +125,13 @@ impl Exercice for First {
         let diagnostic = lines
             .iter()
             .enumerate()
-            .map(|(n, line)| BinSeq::from_str(line).map_err(|e| solver::Error::WrongLine(n, e)))
+            .map(|(line_number, line)| {
+                BinSeq::from_str(line).map_err(|e| solver::Error::WrongLine {
+                    line_number,
+                    line: line.into(),
+                    description: e.to_string(),
+                })
+            })
             .collect::<Result<Vec<_>, solver::Error>>()?;
 
         first_part(diagnostic)
@@ -191,7 +205,9 @@ fn most_common_in_matching<'a>(
         return Ok(diagnostic.iter().find(|b| b.matches(&pattern)).unwrap());
     }
     if pattern.len() == SEQ_LEN {
-        return Err(solver::Error::ExpectationUnfulfilled);
+        return Err(solver::Error::ExpectationUnfulfilled(
+            "Duplicated binary sequence found".into(),
+        ));
     }
 
     let signed_count: i64 = diagnostic

@@ -46,9 +46,12 @@ impl Parse for Parser {
         let moves = lines
             .iter()
             .enumerate()
-            .map(|(i, line)| {
-                line.try_into()
-                    .map_err(|_| solver::Error::WrongLine(i, solver::FormatError::UnexpectedCharacter))
+            .map(|(line_number, line)| {
+                line.try_into().map_err(|_| solver::Error::WrongLine {
+                    line_number,
+                    line: line.to_string(),
+                    description: "TODO".into(),
+                })
             })
             .collect::<Result<Vec<_>, _>>();
         moves
