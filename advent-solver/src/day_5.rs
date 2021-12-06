@@ -1,6 +1,7 @@
 use std::{collections::HashMap, str::FromStr};
 
 use derive_more::Display;
+use itertools::Itertools;
 
 use crate::solver::{Parse, Solver};
 
@@ -21,6 +22,12 @@ pub enum ParsingError {
 pub struct Point {
     x: i64,
     y: i64,
+}
+
+impl From<(i64, i64)> for Point {
+    fn from(p: (i64, i64)) -> Self {
+        Point { x: p.0, y: p.1 }
+    }
 }
 
 impl FromStr for Point {
@@ -84,6 +91,22 @@ impl Line {
 
     pub fn is_diagonal(&self) -> bool {
         self.start.x - self.end.x == self.start.y - self.end.y
+            || self.start.x - self.end.x == -(self.start.y - self.end.y)
+    }
+}
+
+impl From<(usize, usize, usize, usize)> for Line {
+    fn from(line: (usize, usize, usize, usize)) -> Self {
+        Line {
+            start: Point {
+                x: line.0 as i64,
+                y: line.1 as i64,
+            },
+            end: Point {
+                x: line.2 as i64,
+                y: line.3 as i64,
+            },
+        }
     }
 }
 
@@ -182,19 +205,64 @@ impl Solver for First {
 
     fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, crate::solver::Error> {
         let model = model;
-        let mut count_map: HashMap<Point, usize> = HashMap::<Point, usize>::new();
-        for line in model.into_iter().filter(Line::is_simple) {
-            //println!("{:?}", line);
-            line.into_iter().for_each(|p| {
-                if let Some(count) = count_map.get_mut(&p) {
-                    *count += 1;
-                } else {
-                    count_map.insert(p, 1);
-                }
-            });
-        }
+        let count_map: HashMap<Point, usize> = model
+            .into_iter()
+            .filter(Line::is_simple)
+            .flat_map(IntoIterator::into_iter)
+            .into_group_map_by(|p| *p)
+            .into_iter()
+            .map(|occ| (occ.0, occ.1.len()))
+            .collect();
+
         let inter = count_map.iter().filter(|(p, count)| **count >= 2).collect::<Vec<_>>();
-        //println!("{:?}", inter);
         Ok(inter.len())
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct Second {}
+
+impl Solver for Second {
+    type ProblemModel = Vec<Line>;
+
+    type Solution = usize;
+
+    fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, crate::solver::Error> {
+        let is_easy_geo = |line: &Line| -> bool { line.is_simple() || line.is_diagonal() };
+        let model = model;
+        let count_map: HashMap<Point, usize> = model
+            .into_iter()
+            .filter(is_easy_geo)
+            .flat_map(IntoIterator::into_iter)
+            .into_group_map_by(|p| *p)
+            .into_iter()
+            .map(|occ| (occ.0, occ.1.len()))
+            .collect();
+
+        let inter = count_map.iter().filter(|(p, count)| **count >= 2).collect::<Vec<_>>();
+        Ok(inter.len())
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+    #[test]
+    fn it_iterates_diagonals() {
+        let line: Line = (1, 1, 4, 4).into();
+        let expected: Vec<Point> = [(1, 1), (2, 2), (3, 3), (4, 4)].map(Into::into).into();
+        let result = line.into_iter().collect::<Vec<_>>();
+        assert_eq!(result, expected);
+    }
+
+    #[test]
+    fn it_knows_which_lines_are_diagonals() {
+        let diagonals: Vec<Line> = [(5, 5, 0, 0), (5, 5, 10, 0), (5, 5, 10, 10), (5, 5, 0, 10)]
+            .map(Into::into)
+            .into();
+        for line in diagonals {
+            assert!(line.is_diagonal(), "{:?} supposed to be diagonal", line)
+        }
     }
 }
