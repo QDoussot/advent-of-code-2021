@@ -27,7 +27,10 @@ mod day_5;
 use day_5::First as Day5First;
 
 mod solver;
-use solver::{Exercice, Schooler};
+use solver::Exercice;
+
+mod schooler;
+use schooler::Schooler;
 
 #[derive(StructOpt)]
 struct Opt {
