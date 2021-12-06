@@ -26,6 +26,9 @@ use day_4::Second as Day4Second;
 mod day_5;
 use day_5::First as Day5First;
 
+mod day_6;
+use day_6::LanterfishCrew as Day6First;
+
 mod solver;
 use solver::Exercice;
 
@@ -52,7 +55,7 @@ enum Error {
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
-    let solvers: [[Box<dyn Exercice>; 2]; 5] = {
+    let solvers: [[Box<dyn Exercice>; 2]; 6] = {
         use solver::{new, Unimplemented};
         [
             [
@@ -74,6 +77,10 @@ fn main() -> Result<(), Error> {
             [
                 Schooler::<Day5First, Day5First>::new(),
                 Schooler::<Day5First, day_5::Second>::new(),
+            ],
+            [
+                Schooler::<Day6First, Day6First>::new(),
+                Schooler::<Day6First, day_6::Second>::new(),
             ],
         ]
     };

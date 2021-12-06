@@ -5,6 +5,7 @@ use std::{fmt::Display, marker::PhantomData};
 #[derive(Debug)]
 pub enum Error {
     UnimplementedSolver,
+    EmptyFile,
     WrongLine {
         description: String,
         line_number: usize,
