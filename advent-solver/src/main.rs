@@ -56,7 +56,6 @@ fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
     let solvers: [[Box<dyn Exercice>; 2]; 6] = {
-        use solver::{new, Unimplemented};
         [
             [
                 Schooler::<Day1Parser, Day1First>::new(),

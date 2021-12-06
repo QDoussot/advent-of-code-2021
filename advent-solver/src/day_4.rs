@@ -97,7 +97,7 @@ impl Display for Board {
             for el in line {
                 write!(f, "{:>5}  ", el.to_string())?
             }
-            writeln!(f, "")?
+            writeln!(f)?
         }
         Ok(())
     }
@@ -356,10 +356,6 @@ mod test {
         ];
 
         grid[1][3].number = 4;
-        for line in &grid {
-            for el in line {}
-        }
-        //grid[1][3].played = true;
 
         let mut board = Board { grid };
         println!("{}", board);

@@ -11,7 +11,6 @@ pub enum ParsingError {
     NotADigit(String),
     #[display(fmt = "Mal")]
     MalformedPoint(String),
-    MalformedLine,
     StartPointMissing,
     MiddleArrowMissing,
     EndPointMissing,
@@ -166,10 +165,6 @@ impl Iterator for LineIterator {
     }
 }
 
-struct Day5 {
-    wind_lines: Vec<Line>,
-}
-
 trait Exercice {
     type Error;
     type Solution;
@@ -214,7 +209,7 @@ impl Solver for First {
             .map(|occ| (occ.0, occ.1.len()))
             .collect();
 
-        let inter = count_map.iter().filter(|(p, count)| **count >= 2).collect::<Vec<_>>();
+        let inter = count_map.iter().filter(|(_p, count)| **count >= 2).collect::<Vec<_>>();
         Ok(inter.len())
     }
 }
@@ -239,7 +234,7 @@ impl Solver for Second {
             .map(|occ| (occ.0, occ.1.len()))
             .collect();
 
-        let inter = count_map.iter().filter(|(p, count)| **count >= 2).collect::<Vec<_>>();
+        let inter = count_map.iter().filter(|(_p, count)| **count >= 2).collect::<Vec<_>>();
         Ok(inter.len())
     }
 }

@@ -87,7 +87,7 @@ impl Solver for LanterfishCrew {
     type Solution = usize;
 
     fn solve(&self, mut model: Self::ProblemModel) -> Result<Self::Solution, Error> {
-        for i in 1..=80 {
+        for _i in 1..=80 {
             model.next();
         }
         Ok(model.size())
@@ -103,7 +103,7 @@ impl Solver for Second {
     type Solution = usize;
 
     fn solve(&self, mut model: Self::ProblemModel) -> Result<Self::Solution, Error> {
-        for i in 1..=256 {
+        for _i in 1..=256 {
             model.next();
         }
         Ok(model.size())

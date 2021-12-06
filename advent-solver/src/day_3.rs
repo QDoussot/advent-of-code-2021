@@ -114,9 +114,7 @@ impl Solver for First {
     type Solution = usize;
 
     fn solve(&self, model: Self::ProblemModel) -> Result<Self::Solution, solver::Error> {
-        first_part(model)
-            .map_err(Into::into)
-            .map(|power_consumption| power_consumption)
+        first_part(model).map_err(Into::into)
     }
 }
 
@@ -194,11 +192,11 @@ impl BitCriteria for LeastCommon {
     }
 }
 
-fn most_common_in_matching<'a>(
-    diagnostic: &'a [BinSeq],
+fn most_common_in_matching(
+    diagnostic: &[BinSeq],
     criteria: impl BitCriteria,
     mut pattern: Vec<bool>,
-) -> Result<&'a BinSeq, solver::Error> {
+) -> Result<&BinSeq, solver::Error> {
     let count = diagnostic.iter().filter(|b| b.matches(&pattern)).count();
 
     if count == 1 {
@@ -232,7 +230,7 @@ mod test {
         let inner = [
             true, true, false, false, true, true, false, false, true, true, false, false,
         ];
-        let bin_seq = BinSeq(inner.clone());
+        let bin_seq = BinSeq(inner);
         let matcher = [true, true];
         let not_matcher = [false, true];
         assert!(bin_seq.matches(&matcher));
