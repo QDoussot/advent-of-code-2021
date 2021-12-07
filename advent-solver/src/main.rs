@@ -96,24 +96,21 @@ fn main() -> Result<(), Error> {
         return Err(Error::NoCorrespondingSolver);
     }
 
-    let lines = match opt.input {
+    let file_name = match opt.input {
         None => {
             let ext = match opt.example {
                 false => "",
                 true => ".example",
             };
-            let file = std::fs::File::open(format!("inputs/{}{}", opt.day, ext))
-                .map_err(|e| Error::CantOpenInputFile(e.to_string()))?;
-            BufReader::new(file)
-                .lines()
-                .collect::<Result<Vec<_>, io::Error>>()
-                .unwrap()
+            format!("inputs/{}{}", opt.day, ext)
         }
-        Some(_) => {
-            //let lines = stdin.lines().collect::<Result<Vec<_>, io::Error>>().unwrap();
-            todo!()
-        }
+        Some(file_name) => file_name,
     };
+    let file = std::fs::File::open(file_name).map_err(|e| Error::CantOpenInputFile(e.to_string()))?;
+    let lines = BufReader::new(file)
+        .lines()
+        .collect::<Result<Vec<_>, io::Error>>()
+        .unwrap();
 
     let solution = solvers[opt.day - 1][opt.part - 1].solve(&lines);
     println!("{}", solution.map_err(Error::SolverFailed)?);
