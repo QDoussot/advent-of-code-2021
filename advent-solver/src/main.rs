@@ -1,4 +1,5 @@
 #![feature(array_zip)]
+#![feature(int_abs_diff)]
 
 use std::io::{self, BufRead, BufReader};
 use structopt::StructOpt;
@@ -29,6 +30,9 @@ use day_5::First as Day5First;
 mod day_6;
 use day_6::LanterfishCrew as Day6First;
 
+mod day_7;
+use day_7::First;
+
 mod solver;
 use solver::Exercice;
 
@@ -55,7 +59,7 @@ enum Error {
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
 
-    let solvers: [[Box<dyn Exercice>; 2]; 6] = {
+    let solvers: [[Box<dyn Exercice>; 2]; 7] = {
         [
             [
                 Schooler::<Day1Parser, Day1First>::new(),
@@ -80,6 +84,10 @@ fn main() -> Result<(), Error> {
             [
                 Schooler::<Day6First, Day6First>::new(),
                 Schooler::<Day6First, day_6::Second>::new(),
+            ],
+            [
+                Schooler::<day_7::CrabCrew, day_7::First>::new(),
+                Schooler::<day_7::CrabCrew, day_7::Second>::new(),
             ],
         ]
     };
