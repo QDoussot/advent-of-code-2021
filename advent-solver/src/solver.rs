@@ -79,3 +79,19 @@ where
         Err(Error::UnimplementedSolver)
     }
 }
+
+#[derive(Debug)]
+pub enum ParsingError {
+    IncorrectLine {
+        description: String,
+        number: usize,
+        line: String,
+    },
+}
+pub enum SolvingError {}
+
+pub trait Problem: Sized {
+    fn parse(lines: &[String]) -> Result<Self, ParsingError>;
+    fn part_one(&self) -> Result<usize, SolvingError>;
+    fn part_two(&self) -> Result<usize, SolvingError>;
+}

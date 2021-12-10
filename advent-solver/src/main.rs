@@ -1,7 +1,15 @@
 #![feature(array_zip)]
 #![feature(int_abs_diff)]
+#![feature(bool_to_option)]
 
+mod application;
+mod bin_seq;
+mod pop_array;
+
+use solver::ParsingError;
+use solver::SolvingError;
 use std::io::{self, BufRead, BufReader};
+use std::str::FromStr;
 use structopt::StructOpt;
 
 mod day_1;
@@ -33,11 +41,19 @@ use day_6::LanterfishCrew as Day6First;
 mod day_7;
 use day_7::First;
 
+mod day_8;
+use day_8::SevenSegmentSearch;
+
 mod solver;
 use solver::Exercice;
 
 mod schooler;
 use schooler::Schooler;
+
+enum Part {
+    One,
+    Two,
+}
 
 #[derive(StructOpt)]
 struct Opt {
@@ -52,49 +68,40 @@ struct Opt {
 #[derive(Debug)]
 enum Error {
     CantOpenInputFile(String),
+    ParsingFailed(solver::ParsingError),
     NoCorrespondingSolver,
     SolverFailed(solver::Error),
 }
 
+use solver::Problem;
+struct Example {}
+
+impl Problem for Example {
+    fn parse(lines: &[String]) -> Result<Self, ParsingError> {
+        todo!()
+    }
+
+    fn part_one(&self) -> Result<usize, SolvingError> {
+        todo!()
+    }
+
+    fn part_two(&self) -> Result<usize, SolvingError> {
+        todo!()
+    }
+    //
+}
+
+fn solve<T: Problem>(lines: &[String], part: usize) -> Result<usize, Error> {
+    let problem = T::parse(&lines).map_err(|e| Error::ParsingFailed(e))?;
+    if part == 1 {
+        problem.part_one().map_err(|_| Error::NoCorrespondingSolver)
+    } else {
+        problem.part_two().map_err(|_| Error::NoCorrespondingSolver)
+    }
+}
+
 fn main() -> Result<(), Error> {
     let opt = Opt::from_args();
-
-    let solvers: [[Box<dyn Exercice>; 2]; 7] = {
-        [
-            [
-                Schooler::<Day1Parser, Day1First>::new(),
-                Schooler::<Day1Parser, Day1Second>::new(),
-            ],
-            [
-                Schooler::<Day2Parser, Day2First>::new(),
-                Schooler::<Day2Parser, Day2Second>::new(),
-            ],
-            [
-                Schooler::<Day3Parser, Day3First>::new(),
-                Schooler::<Day3Parser, Day3Second>::new(),
-            ],
-            [
-                Schooler::<Day4Parser, Day4First>::new(),
-                Schooler::<Day4Parser, Day4Second>::new(),
-            ],
-            [
-                Schooler::<Day5First, Day5First>::new(),
-                Schooler::<Day5First, day_5::Second>::new(),
-            ],
-            [
-                Schooler::<Day6First, Day6First>::new(),
-                Schooler::<Day6First, day_6::Second>::new(),
-            ],
-            [
-                Schooler::<day_7::CrabCrew, day_7::First>::new(),
-                Schooler::<day_7::CrabCrew, day_7::Second>::new(),
-            ],
-        ]
-    };
-
-    if opt.day > solvers.len() || !((1..=2).contains(&opt.part)) {
-        return Err(Error::NoCorrespondingSolver);
-    }
 
     let file_name = match opt.input {
         None => {
@@ -112,8 +119,11 @@ fn main() -> Result<(), Error> {
         .collect::<Result<Vec<_>, io::Error>>()
         .unwrap();
 
-    let solution = solvers[opt.day - 1][opt.part - 1].solve(&lines);
-    println!("{}", solution.map_err(Error::SolverFailed)?);
+    let solution = match opt.day {
+        8 => solve::<SevenSegmentSearch>(&lines, opt.part)?,
+        _ => return Err(Error::NoCorrespondingSolver),
+    };
+    println!("{}", solution);
 
     Ok(())
 }
