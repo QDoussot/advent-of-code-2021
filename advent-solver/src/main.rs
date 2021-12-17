@@ -44,6 +44,9 @@ use day_7::First;
 mod day_8;
 use day_8::SevenSegmentSearch;
 
+mod day_17;
+use day_17::ProbeSystem;
+
 mod solver;
 use solver::Exercice;
 
@@ -121,6 +124,7 @@ fn main() -> Result<(), Error> {
 
     let solution = match opt.day {
         8 => solve::<SevenSegmentSearch>(&lines, opt.part)?,
+        17 => solve::<ProbeSystem>(&lines, opt.part)?,
         _ => return Err(Error::NoCorrespondingSolver),
     };
     println!("{}", solution);
